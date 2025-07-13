@@ -2,7 +2,7 @@
 
 **memodisk** is a python module to memoize function results on disk with python code and data dependencies tracking.
 
-![Python package](https://github.com/martinResearch/postponed/workflows/Python%20package/badge.svg)
+![Python package](https://github.com/martinResearch/memodisk/workflows/Python%20package/badge.svg)
 
 ## Goal
 

@@ -5,7 +5,9 @@ import numpy as np
 
 from memodisk import DataLoaderWrapper, memoize
 
-cv2.imread = DataLoaderWrapper(cv2.imread)  # wrap the opencv function for the input file to be added as data dependency
+# wrap the opencv function for the input file to be added as data dependency
+
+cv2.imread = DataLoaderWrapper(cv2.imread)  # type: ignore
 
 
 def save_file(x: np.ndarray) -> None:
@@ -15,6 +17,8 @@ def save_file(x: np.ndarray) -> None:
 @memoize
 def load_file() -> np.ndarray:
     data = cv2.imread("test.png")
+    if data is None:
+        raise FileNotFoundError("File not found or could not be read.")
     return data
 
 

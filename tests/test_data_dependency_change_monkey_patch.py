@@ -27,10 +27,9 @@ def load_image(filename: str) -> np.ndarray:
 
 def test_data_loader_monkey_patching() -> None:
     """Test that change if data dependency file is detected when monkey patching the loading function"""
-    cv2.imread = DataLoaderWrapper(
-        cv2.imread
-    )  # wrap the opencv function for the input file to be added as data dependency
+    # wrap the opencv function for the input file to be added as data dependency
 
+    cv2.imread = DataLoaderWrapper(cv2.imread)  # type: ignore
     with tempfile.TemporaryDirectory(prefix="memodisk_cache_tests") as tmp_folder:
         set_cache_dir(tmp_folder)
         reset_last_cache_loading()

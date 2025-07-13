@@ -39,6 +39,7 @@ dependencies = [
 ]
 
 
+
 [tool.setuptools_scm]
 version_file = "memodisk/_version.py"
 
@@ -90,6 +91,7 @@ exclude = [
     "__pycache__",
     ".pytest_cache",
     "*.egg-info",
+    "memodisk/_version.py"
 ]
 
 [tool.ruff.lint]

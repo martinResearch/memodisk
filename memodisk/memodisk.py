@@ -48,11 +48,11 @@ def get_python_lib() -> str:
 
 # numpy as numba used to get the random states before and after function call
 # could use plugin approach instead
-np: Optional[ModuleType]
+numpy: Optional[ModuleType]
 try:
-    import numpy as np
+    import numpy
 except ImportError:
-    np = None
+    numpy = None
 
 
 max_bytes = 2**31 - 1
@@ -488,8 +488,8 @@ def dependency_changed(func: Callable, all_dependencies: dict) -> bool:
     """Detect if any of the dependencies of the function has changed."""
     # detect if any random state changed
     if all_dependencies["random_states"] is not None:
-        assert np is not None, "You need the numpy module"
-        random_state_before = {"numpy": base64.b64encode(pickle.dumps(np.random.get_state())).decode("utf-8")}
+        assert numpy is not None, "You need the numpy module"
+        random_state_before = {"numpy": base64.b64encode(pickle.dumps(numpy.random.get_state())).decode("utf-8")}
         for name in ["numpy"]:
             if not random_state_before[name] == all_dependencies["random_states"]["before"][name]:
                 print_change("random seed changed")
@@ -623,22 +623,22 @@ def get_dependencies_runtime(func: Callable, *args: Any, **kwargs: Any) -> Tuple
     frame = inspect.currentframe()
     assert frame is not None
 
-    if np is not None:
+    if numpy is not None:
         random_state_before = {
-            "numpy": base64.b64encode(pickle.dumps(np.random.get_state())).decode("utf-8"),
+            "numpy": base64.b64encode(pickle.dumps(numpy.random.get_state())).decode("utf-8"),
         }
     else:
         random_state_before = None
 
     result = func(*args, **kwargs)
-    if np is not None:
+    if numpy is not None:
         random_state_after = {
-            "numpy": base64.b64encode(pickle.dumps(np.random.get_state())).decode("utf-8"),
+            "numpy": base64.b64encode(pickle.dumps(numpy.random.get_state())).decode("utf-8"),
         }
     else:
         random_state_after = None
     random_state_changed = False
-    if np is not None:
+    if numpy is not None:
         assert random_state_after is not None
         assert random_state_before is not None
         for name in ["numpy"]:
@@ -782,9 +782,9 @@ def memoize(func: Callable[P, R]) -> Callable[P, R]:
                 else:
                     tracer.inherited_dependencies_counters[dep] = 1
 
-                if np is not None:
+                if numpy is not None:
                     if all_dependencies["random_states"] is not None:
-                        np.random.set_state(
+                        numpy.random.set_state(
                             pickle.loads(
                                 binascii.a2b_base64(all_dependencies["random_states"]["after"]["numpy"].encode("utf-8"))
                             )

@@ -7,7 +7,7 @@ name = "memodisk"
 dynamic = ["version"]
 description = "A python module to memoize function results on disk with python code and data dependencies tracking"
 readme = "README.md"
-requires-python = "==3.10.*"
+requires-python = ">=3.8"
 license = {file = "LICENSE"}
 authors = [
     {name = "Martin de La Gorce", email = "martin.delagorce@gmail.com"},
@@ -65,12 +65,9 @@ test = [
 [project.urls]
 Homepage = "https://github.com/martinResearch/memodisk"
 Repository = "https://github.com/martinResearch/memodisk"
-Documentation = "https://github.com/martinResearch/memodisk#readme"
-"Bug Reports" = "https://github.com/martinResearch/memodisk/issues"
-"Source Code" = "https://github.com/martinResearch/memodisk"
 
 [tool.setuptools]
-package-dir = {"" = "."}
+include-package-data = true
 
 [tool.setuptools.dynamic]
 version = {attr = "memodisk.__version__"}
@@ -78,7 +75,7 @@ version = {attr = "memodisk.__version__"}
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["memodisk*"]
-exclude = ["tests*", "examples*"]
+exclude = ["tests*"]
 
 [tool.setuptools.package-data]
 memodisk = ["py.typed"]

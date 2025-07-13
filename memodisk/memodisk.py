@@ -43,7 +43,7 @@ from typing_extensions import ParamSpec
 
 def get_python_lib() -> str:
     """Get the path to the Python library."""
-    return get_path("purelib")  # type: ignore
+    return get_path("purelib")
 
 
 # numpy as numba used to get the random states before and after function call
@@ -212,7 +212,7 @@ def get_function_from_frame(frame: types.FrameType) -> Optional[Callable]:
                 # if getattr(func, "__globals__", None) is globs: # numpy gfa
                 #     return func
     if frame.f_back is not None:
-        for func in frame.f_back.f_globals:
+        for _, func in frame.f_back.f_globals.items():
             if type(func) is functype:
                 if getattr(func, "__code__", None) is code:
                     return func
@@ -533,6 +533,7 @@ def dependency_changed(func: Callable, all_dependencies: dict) -> bool:
 
         # retrieve handle to the function
         func_dep = func
+        node: ModuleType | None | Callable
         if func.__qualname__ != function_qualified_name:
             if entry_code.module == "__main__":
                 node = inspect.getmodule(func)
@@ -555,13 +556,14 @@ def dependency_changed(func: Callable, all_dependencies: dict) -> bool:
                 node = new_node
             if isinstance(node, property):
                 # TODO might need to store in the json if getter or setter:
-                node = node.fget
-            assert callable(node)
+                node = node.fget  # type: ignore
+            print(type(node))
+            assert callable(node), f"Node {node} is not callable in {filename}"
             func_dep = node
 
             try:
                 if func_dep.__code__.co_name == "_memoize_wrapper":
-                    func_dep = func_dep.__wrapped__
+                    func_dep = func_dep.__wrapped__  # type: ignore
             except Exception:
                 return True
 

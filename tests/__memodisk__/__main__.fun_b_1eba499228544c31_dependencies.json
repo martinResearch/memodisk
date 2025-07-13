@@ -1,0 +1,25 @@
+{
+    "arguments_hash": "1eba499228544c31208da6a1d874fff1d5b6eddfa472d48ce86f908fbb29e80a",
+    "code": [
+        {
+            "function_qualified_name": "fun_b",
+            "module": "__main__",
+            "filename": "C:\\repos\\memodisk\\tests\\test_nested_memoize.py",
+            "bytecode_hash": "d8d17feb8d26e46d11c4ca1845d8c0710331bbee9ae44e32a1b98a38d91cf75f",
+            "global_vars": {
+                "fun_a": "fun_a"
+            },
+            "closure_vars": {}
+        },
+        {
+            "function_qualified_name": "fun_a",
+            "module": "__main__",
+            "filename": "C:\\repos\\memodisk\\tests\\test_nested_memoize.py",
+            "bytecode_hash": "ec01d155468672dcb329c237b0d13a9be8a7a09658433e80218e79b3a3036a9c",
+            "global_vars": {},
+            "closure_vars": {}
+        }
+    ],
+    "data": [],
+    "random_states": null
+}

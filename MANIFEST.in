@@ -1,0 +1,12 @@
+include README.md
+include LICENSE
+include CHANGELOG.rst
+include requirements.txt
+include requirements.in
+recursive-include memodisk *.py *.typed
+recursive-include examples *.py
+recursive-include tests *.py
+global-exclude *.pyc
+global-exclude __pycache__
+global-exclude .pytest_cache
+global-exclude *.egg-info

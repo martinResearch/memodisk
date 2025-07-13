@@ -1,0 +1,35 @@
+{
+    "arguments_hash": "4a6f12b45303cb21f372e762cd937f0bdaabbfd214bfa7a0eb85d50247d285f8",
+    "code": [
+        {
+            "function_qualified_name": "f3",
+            "module": "__main__",
+            "filename": "C:\\repos\\memodisk\\tests\\test_dependency_inheritance_a.py",
+            "bytecode_hash": "d76a6077729b86a0fcea3633ce4003873eef19506e8b7462a36a5f3dbbf59000",
+            "global_vars": {
+                "f2": "f2"
+            },
+            "closure_vars": {}
+        },
+        {
+            "function_qualified_name": "f2",
+            "module": "__main__",
+            "filename": "C:\\repos\\memodisk\\tests\\test_dependency_inheritance_a.py",
+            "bytecode_hash": "d76a6077729b86a0fcea3633ce4003873eef19506e8b7462a36a5f3dbbf59000",
+            "global_vars": {
+                "f1": "f1"
+            },
+            "closure_vars": {}
+        },
+        {
+            "function_qualified_name": "f1",
+            "module": "__main__",
+            "filename": "C:\\repos\\memodisk\\tests\\test_dependency_inheritance_a.py",
+            "bytecode_hash": "484e18022be76c47cc95bb40b870f10b38697d3be2dd4574f6d741cb4f262cd0",
+            "global_vars": {},
+            "closure_vars": {}
+        }
+    ],
+    "data": [],
+    "random_states": null
+}

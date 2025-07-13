@@ -1,0 +1,4 @@
+*.pyc
+__pycache__
+memodisk.egg-info
+

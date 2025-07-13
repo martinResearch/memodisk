@@ -1,0 +1,170 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "memodisk"
+dynamic = ["version"]
+description = "A python module to memoize function results on disk with python code and data dependencies tracking"
+readme = "README.md"
+requires-python = "==3.10.*"
+license = {file = "LICENSE"}
+authors = [
+    {name = "Martin de La Gorce", email = "martin.delagorce@gmail.com"},
+]
+maintainers = [
+    {name = "Martin de La Gorce", email = "martin.delagorce@gmail.com"},
+]
+keywords = [
+    "memoization",
+    "caching",
+    "persistent",
+    "dependency-tracking",
+    "disk-cache",
+    "decorator",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Scientific/Engineering",
+    "Topic :: System :: Archiving :: Caching",
+]
+dependencies = [
+    "typing-extensions>=4.0.0",
+]
+
+[project.optional-dependencies]
+
+dev = [
+    "pytest>=6.0",
+    "pytest-cov",
+    "ruff>=0.1.0",
+    "mypy",
+    "pre-commit",
+    "build",
+    "twine",
+]
+test = [
+    "pytest>=6.0",
+    "pytest-cov",
+    "numpy>1.24.4",
+    "numba>=0.61",
+    "opencv-python"
+]
+
+[project.urls]
+Homepage = "https://github.com/martinResearch/memodisk"
+Repository = "https://github.com/martinResearch/memodisk"
+Documentation = "https://github.com/martinResearch/memodisk#readme"
+"Bug Reports" = "https://github.com/martinResearch/memodisk/issues"
+"Source Code" = "https://github.com/martinResearch/memodisk"
+
+[tool.setuptools]
+package-dir = {"" = "."}
+
+[tool.setuptools.dynamic]
+version = {attr = "memodisk.__version__"}
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["memodisk*"]
+exclude = ["tests*", "examples*"]
+
+[tool.setuptools.package-data]
+memodisk = ["py.typed"]
+
+[tool.ruff]
+target-version = "py38"
+line-length = 120
+exclude = [
+    ".git",
+    "python_venv",
+    "__memodisk__",
+    "build",
+    "dist",
+    "__pycache__",
+    ".pytest_cache",
+    "*.egg-info",
+]
+
+[tool.ruff.lint]
+# Enable flake8-bugbear (`B`) rules, in addition to the defaults.
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # Pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "UP",  # pyupgrade
+]
+
+
+[tool.ruff.lint.isort]
+known-first-party = ["memodisk"]
+force-single-line = false
+force-sort-within-sections = false
+single-line-exclusions = ["typing", "typing_extensions"]
+
+[tool.ruff.format]
+# Like Black, use double quotes for strings.
+quote-style = "double"
+# Like Black, indent with spaces, rather than tabs.
+indent-style = "space"
+# Like Black, respect magic trailing commas.
+skip-magic-trailing-comma = false
+# Like Black, automatically detect the appropriate line ending.
+line-ending = "auto"
+
+[tool.mypy]
+python_version = "3.10"
+exclude = ["dist", "python_venv", "build"]
+ignore_missing_imports = true
+disallow_untyped_defs = true
+no_implicit_optional = true
+warn_return_any = true
+warn_unused_configs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra -q --strict-markers"
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+
+[tool.coverage.run]
+source = ["memodisk"]
+omit = ["*/tests/*", "*/test_*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == \"__main__\":",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]

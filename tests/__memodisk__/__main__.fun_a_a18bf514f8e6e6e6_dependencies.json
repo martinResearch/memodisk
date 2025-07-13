@@ -1,0 +1,15 @@
+{
+    "arguments_hash": "a18bf514f8e6e6e6d55522e347b179e018073a736748aa8ee7dfee9bdaa639fe",
+    "code": [
+        {
+            "function_qualified_name": "fun_a",
+            "module": "__main__",
+            "filename": "C:\\repos\\memodisk\\tests\\test_nested_memoize.py",
+            "bytecode_hash": "ec01d155468672dcb329c237b0d13a9be8a7a09658433e80218e79b3a3036a9c",
+            "global_vars": {},
+            "closure_vars": {}
+        }
+    ],
+    "data": [],
+    "random_states": null
+}

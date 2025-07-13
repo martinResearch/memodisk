@@ -24,12 +24,6 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    # install portaudio required by the pyaudio compilation
-    - name: Install portaudio
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y portaudio19-dev
-
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip

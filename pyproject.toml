@@ -7,7 +7,7 @@ name = "memodisk"
 dynamic = ["version"]
 description = "A python module to memoize function results on disk with python code and data dependencies tracking"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = "==3.10"
 license = {file = "LICENSE"}
 authors = [
     {name = "Martin de La Gorce", email = "martin.delagorce@gmail.com"},
@@ -29,12 +29,7 @@ classifiers = [
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Scientific/Engineering",
     "Topic :: System :: Archiving :: Caching",

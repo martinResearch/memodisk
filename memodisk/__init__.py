@@ -16,6 +16,7 @@ __all__ = [
     "get_function_from_frame",
     "hashing_func_map",
     "user_ignore_files",
+    "__version__",
 ]
 
 from .memodisk import (

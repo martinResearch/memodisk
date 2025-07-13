@@ -22,7 +22,7 @@ from memodisk import (
 hashing_func_map[numba.core.registry.CPUDispatcher] = lambda x: hashlib.sha256(x.__code__.co_code).hexdigest()
 
 
-@njit(cache=True)
+@njit(cache=True)  # type: ignore
 def function_numba(x: int) -> int:
     prod: int = x * x
     return prod
@@ -30,10 +30,10 @@ def function_numba(x: int) -> int:
 
 @memoize
 def function_calling_numba(x: int) -> int:
-    return function_numba(x)
+    return function_numba(x)  # type: ignore
 
 
-@njit(cache=True)
+@njit(cache=True)  # type: ignore
 def square_array_numba(x: float, n: int) -> np.ndarray:
     return x * np.ones((n, n), dtype=np.float32)
 
@@ -41,7 +41,7 @@ def square_array_numba(x: float, n: int) -> np.ndarray:
 @memoize
 def square_array(x: float, n: int) -> np.ndarray:
     r = square_array_numba(x, n)
-    return r
+    return r  # type: ignore
 
 
 def test_numba() -> None:

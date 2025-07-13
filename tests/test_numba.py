@@ -5,7 +5,6 @@ import os
 import shutil
 import subprocess
 import tempfile
-from typing import Any, Callable, ParamSpec, TypeVar, Union, overload
 
 import numba
 import numba.core.registry
@@ -19,7 +18,6 @@ from memodisk import (
     reset_last_cache_loading,
     set_cache_dir,
 )
-
 
 hashing_func_map[numba.core.registry.CPUDispatcher] = lambda x: hashlib.sha256(x.__code__.co_code).hexdigest()
 

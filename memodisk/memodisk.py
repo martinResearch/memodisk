@@ -20,9 +20,9 @@ import time
 import types
 from dataclasses import asdict, dataclass
 from dis import HAVE_ARGUMENT, opmap
-from sysconfig import get_path
 from importlib import import_module
 from os.path import exists
+from sysconfig import get_path
 from types import ModuleType
 from typing import (
     IO,

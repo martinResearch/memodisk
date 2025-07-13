@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=61.0", "wheel"]
+requires = ["setuptools>=64.0", "wheel","setuptools-scm>=8"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -38,6 +38,10 @@ dependencies = [
     "typing-extensions>=4.0.0",
 ]
 
+
+[tool.setuptools_scm]
+version_file = "memodisk/_version.py"
+
 [project.optional-dependencies]
 
 dev = [
@@ -64,8 +68,7 @@ Repository = "https://github.com/martinResearch/memodisk"
 [tool.setuptools]
 include-package-data = true
 
-[tool.setuptools.dynamic]
-version = {attr = "memodisk.__version__"}
+
 
 [tool.setuptools.packages.find]
 where = ["."]

@@ -1,6 +1,7 @@
 """Module to memoize function results on disk with python dependencies tracking."""
 
-__version__ = "0.0.1"
+from ._version import __version__
+
 __all__ = [
     "memoize",
     "add_data_dependency",

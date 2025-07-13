@@ -21,8 +21,6 @@ This is a prototype with limited testing and works with python 3.10 only. There 
 
 ## Installation
 
-**Last official release**
-
 ```bash
 pip install memodisk
 ```
@@ -227,4 +225,4 @@ Some of these failure modes can be reproduced using scripts in the [failure_mode
 * [joblib.Memory](https://joblib.readthedocs.io/en/latest/generated/joblib.Memory.html). Python decorator to memoize function to disk. It does not detect changes in the code or data dependencies.
 * [Artemis.fileman.disk_memoize](https://github.com/QUVA-Lab/artemis/blob/master/artemis/fileman/disk_memoize.py) It does not detect changes in the code or data dependencies. [pdf](http://citeseerx.ist.psu.edu/viewdoc/download;jsessionid=59BEC4646686E70CFD2428EF9786B9D0?doi=10.1.1.224.164&rep=rep1&type=pdf)
 * [noWorkflow](http://gems-uff.github.io/noworkflow/). *noWorkflow: a Tool for Collecting, Analyzing, and Managing Provenance from Python Scripts* [pdf](https://par.nsf.gov/servlets/purl/10048452). Library that allows to track how data has been generated. It bears some similarity with the library as it also requires to keep track of dependencies.
-* [klepto](https://mmckerns.github.io/project/pathos/wiki/klepto.html). Allows caching of python function results to files or database archive. The detection of code change is not mentioned and thus probably not supported.
+* [klepto](https://mmckerns.github.io/project/pathos/wiki/klepto.html). Allows caching of python function results to files or database archive. The detection of code change is not mentioned.

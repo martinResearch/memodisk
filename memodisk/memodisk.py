@@ -50,7 +50,7 @@ def get_python_lib() -> str:
 # could use plugin approach instead
 numpy: Optional[ModuleType]
 try:
-    import numpy  # type: ignore[unused-ignore]
+    numpy = __import__("numpy")
 except ImportError:
     numpy = None
 

@@ -1014,7 +1014,7 @@ def _get_compiled_dependencies_for_module(module: ModuleType | None) -> dict[str
         if not isinstance(loaded_file, str | bytes | os.PathLike):
             continue
 
-        normalized_file = os.path.abspath(os.path.normpath(os.fspath(loaded_file)))
+        normalized_file = os.path.abspath(os.path.normpath(str(loaded_file)))
         last_modified_date_str = _get_file_last_modified_date_str(normalized_file)
         if last_modified_date_str is not None:
             compiled_dependencies[normalized_file] = last_modified_date_str
@@ -1062,7 +1062,7 @@ def _merge_file_dependencies(target: dict[str, str], file_dependencies: dict[str
 class CodeBackedCallable(Protocol):
     __code__: types.CodeType
     __qualname__: str
-    __module__: str | None
+    __module__: str | None  # type: ignore[assignment]
     __globals__: dict[str, Any]
 
     def __call__(self, *args: Any, **kwargs: Any) -> Any: ...
@@ -1161,6 +1161,7 @@ def _resolve_dependency_callable(func: Callable[..., Any], entry_code: CodeDepen
 
     node: ModuleType | None | Callable
     if entry_code.module not in ("__main__", None):
+        assert entry_code.module is not None
         node = import_module(entry_code.module)
     else:
         node = inspect.getmodule(func)
@@ -1751,7 +1752,17 @@ def memoize[**P, R](
     external_process_mode: ExternalProcessMode = ...,
     ignore_code_changes: bool = ...,
     condition: Callable[..., bool] | None = ...,
-    serializer: ResultSerializer[R] | None = ...,
+    serializer: ResultSerializer[R],
+    argument_hasher: ArgumentHasher | None = ...,
+    store_call_arguments: bool = ...,
+) -> Callable[[Callable[P, R]], Callable[P, R]]: ...
+@overload
+def memoize[**P, R](
+    *,
+    mode: MemoizeMode = ...,
+    external_process_mode: ExternalProcessMode = ...,
+    ignore_code_changes: bool = ...,
+    condition: Callable[..., bool] | None = ...,
     argument_hasher: ArgumentHasher | None = ...,
     store_call_arguments: bool = ...,
 ) -> Callable[[Callable[P, R]], Callable[P, R]]: ...
@@ -1936,7 +1947,7 @@ def memoize[**P, R](
                     os.makedirs(os.path.dirname(cache_prefix), exist_ok=True)
 
                     assert len(dependencies.code) > 0
-                    all_dependencies = {
+                    all_dependencies: dict[str, Any] = {
                         "arguments_hash": hash_str,
                         "code": [asdict(d) for d in dependencies.code],
                         "data": [asdict(d) for d in dependencies.data],
@@ -2066,7 +2077,7 @@ def _extract_open_target_and_mode(
 
     path: str | None = None
     if isinstance(file, str | bytes | os.PathLike):
-        path = os.fspath(file)
+        path = str(file)
 
     return path, mode
 

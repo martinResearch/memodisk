@@ -1,7 +1,8 @@
 """Testing memoization on non-pure funtions."""
 
 import tempfile
-from typing import Any, Callable, Dict
+from collections.abc import Callable
+from typing import Any
 
 import non_pure_functions
 from non_pure_functions import call_func
@@ -32,7 +33,7 @@ def function_with_dependency_using_global_variable1(x: int) -> int:
 
 @memoize
 def function_with_dependency_using_global_variable2(x: int) -> int:
-    return function_using_global_variable_ext(x)  # type: ignore
+    return function_using_global_variable_ext(x)
 
 
 @memoize
@@ -103,6 +104,21 @@ def fun_b() -> str:
 glob_fun = fun_a
 
 
+class UnpicklableValue:
+    def __init__(self, value: int) -> None:
+        self.value = value
+
+    def __getitem__(self, key: str) -> int:
+        assert key == "value"
+        return self.value
+
+    def __getstate__(self) -> dict[str, Any]:
+        raise TypeError("cannot pickle")
+
+
+global_box: Any = {"value": 45}
+
+
 @memoize
 def function_using_global_func_variable() -> str:
     return glob_fun()
@@ -119,7 +135,12 @@ def function_using_alias() -> int:
 def function_using_injection() -> int:
     f = function_using_global_variable
     r = call_func(f, 2)
-    return r  # type: ignore
+    return r
+
+
+@memoize
+def function_using_global_box() -> int:
+    return global_box["value"]
 
 
 def test_function_using_global_func_variable() -> None:
@@ -167,7 +188,7 @@ def test_function_using_injection() -> None:
 
 def cached_one_arg_func(user_function: Callable) -> Callable:
     sentinel = object()  # unique object used to signal cache misses
-    cache: Dict[Any, Any] = {}
+    cache: dict[Any, Any] = {}
     cache_get = cache.get
 
     def wrapper(key: Any) -> Any:
@@ -185,7 +206,7 @@ def cached_one_arg_func(user_function: Callable) -> Callable:
 def function_using_cached_one_arg_func(x: int) -> int:
     f = function_using_global_variable
     f2 = cached_one_arg_func(f)
-    return f2(x)  # type: ignore
+    return f2(x)
 
 
 def test_function_using_cached_one_arg_func() -> None:
@@ -206,6 +227,23 @@ def test_function_using_cached_one_arg_func() -> None:
         assert function_using_cached_one_arg_func(1) == 40
         assert get_last_cache_loading() is None
         global_a = value_before
+
+
+def test_global_variable_becoming_unpicklable_invalidates_without_crashing() -> None:
+    with tempfile.TemporaryDirectory(prefix="memodisk_cache_tests") as tmp_folder:
+        set_cache_dir(tmp_folder)
+
+        global global_box
+        global_box = {"value": 45}
+        assert function_using_global_box() == 45
+
+        assert function_using_global_box() == 45
+        assert get_last_cache_loading() is not None
+
+        reset_last_cache_loading()
+        global_box = UnpicklableValue(40)
+        assert function_using_global_box() == 40
+        assert get_last_cache_loading() is None
 
 
 if __name__ == "__main__":

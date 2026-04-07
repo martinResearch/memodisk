@@ -1,7 +1,7 @@
 """Testing memoization on closure."""
 
 import tempfile
-from typing import Callable
+from collections.abc import Callable
 
 from memodisk import (
     get_last_cache_loading,
@@ -29,7 +29,7 @@ def function_closure2(closure_x: int) -> Callable:
 @memoize
 def function_creating_and_calling_closure(x: int, y: int) -> int:
     closure = function_closure2(x)
-    return closure(y)  # type: ignore
+    return closure(y)
 
 
 def test_closure() -> None:

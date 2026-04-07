@@ -1,6 +1,7 @@
 """Testing non pure function."""
 
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 # from memodisk import get_alias_path
 # import inspect

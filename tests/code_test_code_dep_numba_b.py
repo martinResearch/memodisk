@@ -5,6 +5,7 @@ import os
 import sys
 
 import numba
+import numba.core.registry
 import numpy as np
 from numba import njit
 
@@ -13,7 +14,7 @@ from memodisk import hashing_func_map, memoize, set_cache_dir
 hashing_func_map[numba.core.registry.CPUDispatcher] = lambda x: hashlib.sha256(x.__code__.co_code).hexdigest()
 
 
-@njit(cache=True)  # type: ignore
+@njit(cache=True)
 def square_array_numba(x: float, n: int) -> np.ndarray:
     return 2 * x * np.ones((n, n), dtype=np.float32)
 
@@ -21,7 +22,7 @@ def square_array_numba(x: float, n: int) -> np.ndarray:
 @memoize
 def square_array(x: float, n: int) -> np.ndarray:
     r = square_array_numba(x, n)
-    return r  # type: ignore
+    return r
 
 
 if __name__ == "__main__":

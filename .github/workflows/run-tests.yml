@@ -6,7 +6,7 @@ on:
       python-version:
         required: false
         type: string
-        default: '["3.10"]'
+        default: '["3.12", "3.13", "3.14"]'
         description: 'Python versions to test with'
 
 jobs:

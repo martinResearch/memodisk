@@ -3,9 +3,8 @@
 import functools
 import tempfile
 import types
-from typing import Any, Callable, Optional, Union
-
-import pytest
+from collections.abc import Callable
+from typing import Any
 
 # from memodisk import get_alias_path
 from non_pure_functions import call_func
@@ -20,7 +19,7 @@ def function_using_global_variable(x: int) -> int:
     return x * global_a
 
 
-def mydecorator(f_py: Optional[Callable]) -> Union[types.FunctionType, Callable]:
+def mydecorator(f_py: Callable | None) -> types.FunctionType | Callable:
     assert callable(f_py) or f_py is None
 
     def _decorator(func: Callable) -> Callable:
@@ -39,10 +38,9 @@ def mydecorator(f_py: Optional[Callable]) -> Union[types.FunctionType, Callable]
 def function_with_decorator() -> int:
     f = function_using_global_variable
     r = call_func(f, 2)
-    return r  # type: ignore
+    return r
 
 
-@pytest.mark.skip(reason="decorator not supported yet")
 def test_function_with_decorator() -> None:
     with tempfile.TemporaryDirectory(prefix="memodisk_cache_tests") as tmp_folder:
         set_cache_dir(tmp_folder)

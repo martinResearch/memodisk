@@ -314,9 +314,7 @@ def test_dependency_changed_detects_compiled_module_change(
                 return "1900-01-01 00:00:00"
             return real_get_file_last_modified_date_str(file_path)
 
-        monkeypatch.setattr(
-            memodisk_module, "_get_file_last_modified_date_str", fake_get_file_last_modified_date_str
-        )
+        monkeypatch.setattr(memodisk_module, "_get_file_last_modified_date_str", fake_get_file_last_modified_date_str)
 
         assert memodisk_module.dependency_changed(cached_sin, all_dependencies) is True
 

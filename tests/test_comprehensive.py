@@ -49,6 +49,7 @@ from memodisk import (
 # Helpers
 # ===================================================================
 
+
 def _fresh_cache():
     """Context manager that sets up a temp cache dir."""
     return tempfile.TemporaryDirectory(prefix="memodisk_cache_tests")
@@ -70,6 +71,7 @@ def _assert_not_cached() -> None:
 # ===================================================================
 # 1. Basic caching: cache hit, miss, different args
 # ===================================================================
+
 
 def _pure_multiply(a: int, b: int) -> int:
     return a * b
@@ -384,6 +386,7 @@ class TestBasicCaching:
 # 2. Return type diversity
 # ===================================================================
 
+
 def _identity(x):
     return x
 
@@ -483,6 +486,7 @@ class TestReturnTypes:
 # 3. Argument type diversity
 # ===================================================================
 
+
 @memoize
 def echo_arg(x: Any) -> Any:
     return _identity(x)
@@ -565,6 +569,7 @@ class TestArgumentTypes:
 # ===================================================================
 # 4. Code dependency tracking
 # ===================================================================
+
 
 def helper_add(a: int, b: int) -> int:
     return a + b
@@ -671,6 +676,7 @@ class TestCodeDependencyTracking:
 # ===================================================================
 # 5. Data dependency tracking (via builtin open)
 # ===================================================================
+
 
 @memoize
 def read_file_content(path: str) -> str:
@@ -846,6 +852,7 @@ class TestGlobalVariableTracking:
 # 7. Closure variable tracking
 # ===================================================================
 
+
 class TestClosureTracking:
     def test_closure_basic(self) -> None:
         with _fresh_cache() as d:
@@ -855,6 +862,7 @@ class TestClosureTracking:
                 @memoize
                 def add(x: int) -> int:
                     return x + n
+
                 return add
 
             add5 = make_add(5)
@@ -871,6 +879,7 @@ class TestClosureTracking:
                 @memoize
                 def mul(x: int) -> int:
                     return x * n
+
                 return mul
 
             mul3 = make_mul(3)
@@ -882,6 +891,7 @@ class TestClosureTracking:
 # ===================================================================
 # 8. Nested / recursive memoization
 # ===================================================================
+
 
 @memoize
 def outer(x: int) -> int:
@@ -930,6 +940,7 @@ class TestNestedMemoization:
 # ===================================================================
 # 9. Class and method memoization
 # ===================================================================
+
 
 class Calculator:
     def __init__(self, base: int):
@@ -981,6 +992,7 @@ class TestClassMemoization:
 # ===================================================================
 # 10. Cache management
 # ===================================================================
+
 
 class TestCacheManagement:
     def test_set_cache_dir_changes_location(self) -> None:
@@ -1036,6 +1048,7 @@ class TestCacheManagement:
 # ===================================================================
 # 11. Error handling
 # ===================================================================
+
 
 def _raiser_helper(x: int) -> int:
     if x < 0:
@@ -1098,6 +1111,7 @@ class TestErrorHandling:
 # 12. DataLoaderWrapper
 # ===================================================================
 
+
 def fake_imread(path: str) -> str:
     """Simulates cv2.imread by returning file content as string."""
     with open(path) as f:  # use raw open to not double-count
@@ -1144,6 +1158,7 @@ class TestDataLoaderWrapper:
 # 13. add_data_dependency (manual)
 # ===================================================================
 
+
 @memoize
 def func_with_manual_dep(path: str) -> str:
     add_data_dependency(path)
@@ -1182,10 +1197,12 @@ class TestAddDataDependency:
 # 14. user_ignore_files
 # ===================================================================
 
+
 class TestUserIgnoreFiles:
     def test_user_ignore_files_is_configurable(self) -> None:
         """user_ignore_files is a set we can add to / remove from."""
         from memodisk import user_ignore_files
+
         assert isinstance(user_ignore_files, set)
         user_ignore_files.add("some_fake_path.py")
         assert "some_fake_path.py" in user_ignore_files
@@ -1197,10 +1214,12 @@ class TestUserIgnoreFiles:
 # 15. hashing_func_map
 # ===================================================================
 
+
 class TestHashingFuncMap:
     def test_hashing_func_map_is_extensible(self) -> None:
         """hashing_func_map allows registering custom hash functions."""
         from memodisk import hashing_func_map
+
         assert isinstance(hashing_func_map, dict)
         # Can register and unregister
         sentinel = object()
@@ -1213,6 +1232,7 @@ class TestHashingFuncMap:
 # ===================================================================
 # 16. Numpy random state
 # ===================================================================
+
 
 @memoize
 def func_with_random() -> float:
@@ -1261,6 +1281,7 @@ class TestNumpyRandomState:
 # 17. Comment and formatting changes should NOT invalidate
 # ===================================================================
 
+
 class TestBytecodeStability:
     def test_function_result_survives_comment_change(self) -> None:
         """Since memodisk hashes bytecode, adding/removing comments
@@ -1277,6 +1298,7 @@ class TestBytecodeStability:
 # ===================================================================
 # 18. Large argument / result
 # ===================================================================
+
 
 @memoize
 def sum_large_array(arr: np.ndarray) -> float:

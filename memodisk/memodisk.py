@@ -368,9 +368,7 @@ def _normalize_argument_hash_value(value: ArgumentHashValue) -> bytes:
         return value
     if isinstance(value, str):
         return value.encode("utf-8")
-    raise TypeError(
-        f"ArgumentHasher.hash_args must return bytes or str, got {type(value).__qualname__}"
-    )
+    raise TypeError(f"ArgumentHasher.hash_args must return bytes or str, got {type(value).__qualname__}")
 
 
 def load_cached_call_arguments(dependencies_file: str) -> dict[str, Any]:
@@ -398,11 +396,9 @@ def get_globals_from_code(code: types.CodeType) -> list[str]:
     Uses dis.get_instructions() for stable bytecode introspection
     across Python 3.12+.
     """
-    return sorted({
-        instr.argval
-        for instr in dis.get_instructions(code)
-        if instr.opname in ("LOAD_GLOBAL", "STORE_GLOBAL")
-    })
+    return sorted(
+        {instr.argval for instr in dis.get_instructions(code) if instr.opname in ("LOAD_GLOBAL", "STORE_GLOBAL")}
+    )
 
 
 def _get_instruction_loaded_names(instr: dis.Instruction) -> tuple[str, ...]:
@@ -1155,9 +1151,7 @@ def _callable_matches_dependency(func: object, entry_code: CodeDependency) -> bo
     return entry_code.function_qualified_name in qualnames
 
 
-def _resolve_dependency_callable(
-    func: Callable[..., Any], entry_code: CodeDependency
-) -> CodeBackedCallable | None:
+def _resolve_dependency_callable(func: Callable[..., Any], entry_code: CodeDependency) -> CodeBackedCallable | None:
     for wrapped_func in _iter_wrapped_callables(func):
         if _callable_matches_dependency(wrapped_func, entry_code):
             return _as_code_backed_callable(wrapped_func)
@@ -1293,17 +1287,13 @@ class Tracer:
         assert not self.is_registered
         sys.monitoring.use_tool_id(MEMODISK_TOOL_ID, "memodisk")
         sys.monitoring.set_events(MEMODISK_TOOL_ID, sys.monitoring.events.PY_START)
-        sys.monitoring.register_callback(
-            MEMODISK_TOOL_ID, sys.monitoring.events.PY_START, self._on_py_start
-        )
+        sys.monitoring.register_callback(MEMODISK_TOOL_ID, sys.monitoring.events.PY_START, self._on_py_start)
         self.is_registered = True
 
     def unregister(self) -> None:
         assert self.is_registered
         sys.monitoring.set_events(MEMODISK_TOOL_ID, 0)
-        sys.monitoring.register_callback(
-            MEMODISK_TOOL_ID, sys.monitoring.events.PY_START, None
-        )
+        sys.monitoring.register_callback(MEMODISK_TOOL_ID, sys.monitoring.events.PY_START, None)
         sys.monitoring.free_tool_id(MEMODISK_TOOL_ID)
         self.is_registered = False
 
@@ -1437,9 +1427,7 @@ class Tracer:
 
                 module_name = self._get_module_name(frame)
                 module = sys.modules.get(module_name) if module_name is not None else None
-                _merge_package_versions(
-                    scope.package_versions[func_key], _get_package_versions_for_module(module)
-                )
+                _merge_package_versions(scope.package_versions[func_key], _get_package_versions_for_module(module))
                 _merge_file_dependencies(
                     scope.compiled_dependencies[func_key], _get_compiled_dependencies_for_module(module)
                 )
@@ -1465,8 +1453,7 @@ class Tracer:
             if func_key not in scope.function_modules:
                 scope.function_modules[func_key] = self._get_module_name(frame)
 
-            scope.code_dependencies_counters[func_key] = \
-                scope.code_dependencies_counters.get(func_key, 0) + 1
+            scope.code_dependencies_counters[func_key] = scope.code_dependencies_counters.get(func_key, 0) + 1
 
             if _uses_dynamic_globals(code):
                 scope.has_dynamic_globals = True
@@ -1545,10 +1532,7 @@ def print_change(message: str) -> None:
 
 
 def _external_process_tracking_incomplete(all_dependencies: dict[str, Any]) -> bool:
-    return any(
-        not entry.get("tracking_complete", False)
-        for entry in all_dependencies.get("external_processes", [])
-    )
+    return any(not entry.get("tracking_complete", False) for entry in all_dependencies.get("external_processes", []))
 
 
 def _ambient_time_tracking_incomplete(all_dependencies: dict[str, Any]) -> bool:
@@ -1606,8 +1590,7 @@ def dependency_changed(func: Callable, all_dependencies: dict) -> bool:
             current_version = _get_installed_package_version(package_name)
             if current_version != expected_version:
                 print_change(
-                    f"Package dependency {package_name} has been modified. "
-                    f"Was {expected_version} now {current_version}"
+                    f"Package dependency {package_name} has been modified. Was {expected_version} now {current_version}"
                 )
                 return True
 
@@ -1709,8 +1692,7 @@ def get_dependencies_runtime(
         # Skip nested functions if parent already listed
         if len(qual_parts) > 1:
             if any(
-                func_key.filename + "." + ".".join(qual_parts[:-k]) in all_qual_names
-                for k in range(len(qual_parts))
+                func_key.filename + "." + ".".join(qual_parts[:-k]) in all_qual_names for k in range(len(qual_parts))
             ):
                 continue
 
@@ -1741,14 +1723,8 @@ def get_dependencies_runtime(
     ):
         code_dependencies_list.insert(0, root_dependency)
 
-    data_dependencies_list = [
-        key for key, val in scope.data_dependencies_counters.items()
-        if val > 0
-    ]
-    inherited_dependencies_list = [
-        key for key, val in scope.inherited_dependencies_counters.items()
-        if val > 0
-    ]
+    data_dependencies_list = [key for key, val in scope.data_dependencies_counters.items() if val > 0]
+    inherited_dependencies_list = [key for key, val in scope.inherited_dependencies_counters.items() if val > 0]
 
     dependencies = FunctionDependencies(
         code=code_dependencies_list,
@@ -1843,9 +1819,7 @@ def memoize[**P, R](
                 closure_key = pickle.dumps(closure_nonlocals)
             except (pickle.PicklingError, TypeError, AttributeError):
                 # Fallback: hash the repr + id of each non-picklable value
-                closure_key = pickle.dumps({
-                    k: f"{type(v).__qualname__}:{id(v)}" for k, v in closure_nonlocals.items()
-                })
+                closure_key = pickle.dumps({k: f"{type(v).__qualname__}:{id(v)}" for k, v in closure_nonlocals.items()})
 
             if argument_hasher is not None:
                 hash_bytes = (
@@ -1855,14 +1829,10 @@ def memoize[**P, R](
                 )
             elif mode == "optimistic":
                 # Raw pickle — fast but may produce different hashes for identical objects
-                hash_bytes = pickle.dumps(
-                    (co.co_name, co.co_filename, args, kwargs)
-                ) + closure_key
+                hash_bytes = pickle.dumps((co.co_name, co.co_filename, args, kwargs)) + closure_key
             else:
                 # Canonical hashing — deterministic across insertion orders
-                hash_bytes = _canonical_hash(
-                    (co.co_name, co.co_filename, args, kwargs)
-                ) + closure_key
+                hash_bytes = _canonical_hash((co.co_name, co.co_filename, args, kwargs)) + closure_key
 
             hash_str = hashlib.sha256(hash_bytes).hexdigest()
             hash_str_short = hash_str[:16]
@@ -1901,12 +1871,8 @@ def memoize[**P, R](
                     if cached_result is not _CACHE_MISS:
                         assert cached_dependencies is not None
                         assert matched_dep_file is not None
-                        result_file = os.path.split(
-                            matched_dep_file.replace("_dependencies.json", "_result.pkl")
-                        )[1]
-                        print(
-                            f"Result loaded from {result_file}"
-                        )
+                        result_file = os.path.split(matched_dep_file.replace("_dependencies.json", "_result.pkl"))[1]
+                        print(f"Result loaded from {result_file}")
                         return return_cached(cached_result, cached_dependencies, matched_dep_file)
 
                     result, dependencies, scope = get_dependencies_runtime(
@@ -1921,9 +1887,7 @@ def memoize[**P, R](
                             dep for dep in dependencies.external_processes if not dep.tracking_complete
                         ]
                         if incomplete_external_processes:
-                            process_paths = ", ".join(
-                                dep.executable_path for dep in incomplete_external_processes
-                            )
+                            process_paths = ", ".join(dep.executable_path for dep in incomplete_external_processes)
                             if external_process_mode == "strict" or mode == "strict":
                                 raise RuntimeError(
                                     "memodisk strict mode: external process dependency tracking is incomplete for "
@@ -1995,23 +1959,15 @@ def memoize[**P, R](
                             all_dependencies["external_processes"].append(external_process_dep)
                         for ambient_time_source in dependencies_to_add.get("ambient_time_sources", []):
                             all_dependencies["ambient_time_sources"].append(ambient_time_source)
-                        for ambient_environment_source in dependencies_to_add.get(
-                            "ambient_environment_sources", []
-                        ):
-                            all_dependencies["ambient_environment_sources"].append(
-                                ambient_environment_source
-                            )
+                        for ambient_environment_source in dependencies_to_add.get("ambient_environment_sources", []):
+                            all_dependencies["ambient_environment_sources"].append(ambient_environment_source)
 
-                    all_dependencies["ambient_time_sources"] = sorted(
-                        set(all_dependencies["ambient_time_sources"])
-                    )
+                    all_dependencies["ambient_time_sources"] = sorted(set(all_dependencies["ambient_time_sources"]))
                     all_dependencies["ambient_environment_sources"] = sorted(
                         set(all_dependencies["ambient_environment_sources"])
                     )
 
-                    dep_hash = hashlib.sha256(
-                        json.dumps(all_dependencies, sort_keys=True).encode()
-                    ).hexdigest()[:12]
+                    dep_hash = hashlib.sha256(json.dumps(all_dependencies, sort_keys=True).encode()).hexdigest()[:12]
 
                     result_file = f"{cache_prefix}_{dep_hash}_result.pkl"
                     dependencies_file = f"{cache_prefix}_{dep_hash}_dependencies.json"

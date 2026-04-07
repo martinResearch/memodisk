@@ -1,4 +1,5 @@
 """Debug test to understand tracer behavior."""
+
 import tempfile
 import time
 
@@ -8,9 +9,11 @@ from memodisk import get_last_cache_loading, memoize, reset_last_cache_loading, 
 def helper():
     return time.time()
 
+
 @memoize
 def func_using_time():
     return helper()
+
 
 if __name__ == "__main__":
     with tempfile.TemporaryDirectory(prefix="memodisk_cache_tests") as tmp:

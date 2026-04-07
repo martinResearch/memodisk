@@ -1,4 +1,5 @@
 """Debug test to understand tracer behavior under pytest."""
+
 import tempfile
 import time
 

@@ -390,9 +390,7 @@ def test_extension_module_change_not_detected() -> None:
         with open(dep_files[0]) as f:
             deps = json.load(f)
         compiled_dependencies = {
-            file_path
-            for entry in deps["code"]
-            for file_path in entry.get("compiled_dependencies", {})
+            file_path for entry in deps["code"] for file_path in entry.get("compiled_dependencies", {})
         }
         assert any(file_path.endswith((".pyd", ".so", ".dll")) for file_path in compiled_dependencies)
 
@@ -519,9 +517,7 @@ def test_pickle_hash_nondeterministic(mode: MemoizeMode) -> None:
 
         if mode == "safe":
             # Canonical hashing normalizes order — should be cache hit
-            assert get_last_cache_loading() is not None, (
-                "Expected cache hit for identical dict content (safe mode)"
-            )
+            assert get_last_cache_loading() is not None, "Expected cache hit for identical dict content (safe mode)"
             assert result1 == result2
         else:
             # optimistic: KNOWN FAILURE — raw pickle preserves insertion order,
@@ -565,9 +561,7 @@ def test_only_decorated_functions_memoized() -> None:
         func_not_decorated_counting(5)
 
         # Called twice because it's not decorated
-        assert call_count_non_decorated == 2, (
-            "Non-decorated function is called every time"
-        )
+        assert call_count_non_decorated == 2, "Non-decorated function is called every time"
 
 
 # ===========================================================================
@@ -670,9 +664,7 @@ def test_side_effects_skipped_on_cache_hit() -> None:
         # Second call hits cache — the file write side effect does NOT happen
         result2 = func_with_file_side_effect(42, output_file)
         assert result2 == 84
-        assert not os.path.exists(output_file), (
-            "Side effect (file write) was not replayed on cache hit"
-        )
+        assert not os.path.exists(output_file), "Side effect (file write) was not replayed on cache hit"
 
 
 def test_stale_process_lock_directory_is_recovered_automatically() -> None:
@@ -768,9 +760,11 @@ def test_pathlib_data_dependency_tracked() -> None:
 # ---------------------------------------------------------------------------
 def make_multiplier(factor: int):
     """Return a memoized function that captures `factor` via closure."""
+
     @memoize
     def multiply(x: int) -> int:
         return x * factor
+
     return multiply
 
 
@@ -808,10 +802,7 @@ def test_closure_variable_mutation() -> None:
         # doesn't appear as a LOAD_GLOBAL — it's a LOAD_DEREF.
         # Depending on implementation, this may or may not be stale.
         if get_last_cache_loading() is not None:
-            pytest.xfail(
-                f"Stale result: got {result}, expected 100 — "
-                "mutable closure variable mutation not detected"
-            )
+            pytest.xfail(f"Stale result: got {result}, expected 100 — mutable closure variable mutation not detected")
         assert result == 100
 
 
@@ -1050,7 +1041,7 @@ def test_strict_mode_caches_clean_functions() -> None:
 
         @memoize(mode="strict")
         def expensive(x: int) -> int:
-            return x ** 2
+            return x**2
 
         assert expensive(5) == 25
         reset_last_cache_loading()
@@ -1194,9 +1185,7 @@ def test_safe_mode_never_caches_dynamic_globals() -> None:
             # Same args, same global — safe mode still recomputes (no cache hit)
             reset_last_cache_loading()
             assert compute(5) == 15
-            assert get_last_cache_loading() is None, (
-                "Safe mode should recompute every time with dynamic globals"
-            )
+            assert get_last_cache_loading() is None, "Safe mode should recompute every time with dynamic globals"
         finally:
             globals().pop("_safe_test_val", None)
 
@@ -1230,10 +1219,7 @@ def test_canonical_hash_frozenset_is_stable_across_hash_seeds() -> None:
     """Regression: canonical hashing for frozenset must not depend on the
     interpreter's hash seed.
     """
-    code = (
-        "from memodisk.memodisk import _canonical_hash; "
-        "print(_canonical_hash(frozenset(['aa', 'bb', 'cc'])).hex())"
-    )
+    code = "from memodisk.memodisk import _canonical_hash; print(_canonical_hash(frozenset(['aa', 'bb', 'cc'])).hex())"
 
     env1 = os.environ.copy()
     env1["PYTHONHASHSEED"] = "1"
@@ -1275,4 +1261,3 @@ def test_canonical_hash_dict_repr_collision() -> None:
     right = _canonical_hash({key2: 2, key1: 1})
 
     assert left == right
-

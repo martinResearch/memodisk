@@ -291,7 +291,7 @@ def _resolve_subprocess_executable(
             shell_executable = "/bin/sh"
         return _resolve_executable_path(shell_executable)
 
-    if isinstance(args, (str, bytes, os.PathLike)):
+    if isinstance(args, str | bytes | os.PathLike):
         return _resolve_executable_path(args)
 
     try:
@@ -443,7 +443,7 @@ def _get_direct_ambient_source_name(
     known_sources: dict[tuple[str | None, str | None, Any | None], str],
 ) -> str | None:
     self_obj = getattr(value, "__self__", None)
-    if self_obj is not None and not isinstance(self_obj, (ModuleType, type)):
+    if self_obj is not None and not isinstance(self_obj, ModuleType | type):
         return None
 
     return known_sources.get(_callable_signature(value))
@@ -880,7 +880,7 @@ def _canonicalize(obj: Any) -> Any:
         items = [(_canonicalize(k), _canonicalize(v)) for k, v in obj.items()]
         items.sort(key=lambda item: pickle.dumps(item[0], protocol=4))
         return ("dict", tuple(items))
-    if isinstance(obj, (set, frozenset)):
+    if isinstance(obj, set | frozenset):
         values = [_canonicalize(v) for v in obj]
         values.sort(key=lambda value: pickle.dumps(value, protocol=4))
         return (type(obj).__name__, tuple(values))
@@ -1093,7 +1093,7 @@ def _get_callable_dependency(func: CodeBackedCallable) -> CodeDependency:
         if name in builtins_dict or name not in globals_dict:
             continue
         value = globals_dict[name]
-        if isinstance(value, (type, types.BuiltinFunctionType)):
+        if isinstance(value, type | types.BuiltinFunctionType):
             continue
         global_vars[name] = _get_runtime_hash(name, value)
         _merge_package_versions(package_versions, _get_package_versions_for_value(value))
@@ -1105,7 +1105,7 @@ def _get_callable_dependency(func: CodeBackedCallable) -> CodeDependency:
         if name not in closure_nonlocals:
             continue
         value = closure_nonlocals[name]
-        if isinstance(value, (type, types.BuiltinFunctionType)):
+        if isinstance(value, type | types.BuiltinFunctionType):
             continue
         closure_vars[name] = _get_runtime_hash(name, value)
         _merge_package_versions(package_versions, _get_package_versions_for_value(value))
@@ -2065,7 +2065,7 @@ def _extract_open_target_and_mode(
         mode = "r"
 
     path: str | None = None
-    if isinstance(file, (str, bytes, os.PathLike)):
+    if isinstance(file, str | bytes | os.PathLike):
         path = os.fspath(file)
 
     return path, mode

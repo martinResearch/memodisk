@@ -44,7 +44,7 @@ local_scheme = "no-local-version"
 dev = [
     "pytest>=6.0",
     "pytest-cov",
-    "ruff>=0.1.0",
+    "ruff>=0.15.0",
     "mypy",
     "pre-commit",
     "build",

@@ -232,13 +232,13 @@ Some of these failure modes can be reproduced using scripts in the [failure_mode
 ## TODO
 
 * improve the detection of non-pure function so that it works when using a compiled third party module
-* add a less intrusive alternative to the use of a decorator by registering a function in a list of function names provided directly to disk_memoize
+* add less intrusive alternatives to the decorator-only API — e.g. registering functions in a list of function names provided directly to `disk_memoize`, or other ways to opt into memoization without editing every function definition
 * implement an automatic memoization of function that are long to evaluate using similar criterion to IncPy (see references) to decide if a function should be memoize or not
 * quantify runtime overhead with benchmarks — separate empty-cache tracing cost, cache-hit validation/load cost, and serialization cost; determine the break-even point as a function of execution time and result size
 * async function support (offered by checkpointer, perscache)
 * TTL-based cache expiry — automatically invalidate entries after a time-to-live period (offered by checkpointer, perscache)
 * selective argument ignoring — exclude specific arguments from cache key computation (offered by checkpointer via `HashBy`/`NoHash`, perscache via `ignore`)
-* automatic cache size management with LRU eviction when total storage exceeds a threshold (offered by perscache); consider smarter policies like GDSF (Greedy-Dual-Size-Frequency) that factor in recompute cost and storage size, not just recency (offered by charmonium.cache)
+* configurable cache size limits and automatic cache size management — evict entries when total storage exceeds a user-defined threshold, starting with LRU; consider smarter policies like GDSF (Greedy-Dual-Size-Frequency) that factor in recompute cost and storage size, not just recency (offered by charmonium.cache)
 * overhead-aware caching — measure time saved vs memoization overhead per function and warn when caching is not worthwhile (offered by charmonium.cache via `verbose=True` exit report)
 * pluggable serialization formats — JSON, YAML, CSV, Parquet alongside pickle (offered by perscache)
 * remote/cloud storage backends — S3, GCS, SFTP (offered by perscache, provenance)

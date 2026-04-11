@@ -278,7 +278,7 @@ def test_dependency_json_stores_compiled_module_dependencies() -> None:
             for file_path, last_modified_date_str in entry.get("compiled_dependencies", {}).items()
         }
         assert compiled_dependencies
-        assert any(file_path.endswith(".pyd") for file_path in compiled_dependencies)
+        assert any(file_path.endswith((".pyd", ".so", ".dll", ".dylib")) for file_path in compiled_dependencies)
 
 
 def test_dependency_changed_detects_compiled_module_change(

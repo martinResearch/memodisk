@@ -218,7 +218,15 @@ Some of these failure modes can be reproduced using scripts in the [failure_mode
 * improve the detection of non-pure function so that it works when using a compiled third party module
 * add a less intrusive alternative to the use of a decorator by registering a function in a list of function names provided directly to disk_memoize
 * implement an automatic memoization of function that are long to evaluate using similar criterion to IncPy (see references) to decide if a function should be memoize or not
-* publish module on [pypi.org](pypi.org)
+* ~~publish module on [pypi.org](pypi.org)~~ (done — published as `memodisk`)
+* async function support (offered by checkpointer, perscache)
+* TTL-based cache expiry — automatically invalidate entries after a time-to-live period (offered by checkpointer, perscache)
+* selective argument ignoring — exclude specific arguments from cache key computation (offered by checkpointer via `HashBy`/`NoHash`, perscache via `ignore`)
+* automatic cache size management with LRU eviction when total storage exceeds a threshold (offered by perscache)
+* pluggable serialization formats — JSON, YAML, CSV, Parquet alongside pickle (offered by perscache)
+* remote/cloud storage backends — S3, GCS, SFTP (offered by perscache, provenance)
+* lineage tracking and provenance visualization — record which function produced which artifact from which inputs, with queryable metadata (offered by provenance)
+* class method caching with per-instance cache isolation (offered by perscache)
 
 ## Alternatives
 

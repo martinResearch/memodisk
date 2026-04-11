@@ -1353,6 +1353,5 @@ def test_stale_lock_double_remove_race() -> None:
         # simultaneously so max_concurrent == 2.  After the fix,
         # max_concurrent must be exactly 1.
         assert max_concurrent == 1, (
-            f"Mutual exclusion violated: {max_concurrent} threads were in "
-            f"the critical section simultaneously"
+            f"Mutual exclusion violated: {max_concurrent} threads were in the critical section simultaneously"
         )

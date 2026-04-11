@@ -705,8 +705,10 @@ def _is_pid_running(pid: int) -> bool:
 
 def _write_lock_owner_metadata(lock_path: str) -> None:
     owner_path = _lock_owner_file_path(lock_path)
-    with builtins_open(owner_path, "w", encoding="utf-8") as fh:
+    tmp_path = owner_path + ".tmp"
+    with builtins_open(tmp_path, "w", encoding="utf-8") as fh:
         json.dump({"pid": os.getpid(), "created_at": time.time()}, fh)
+    os.replace(tmp_path, owner_path)
 
 
 def _lock_metadata_is_stale(lock_path: str) -> bool:
@@ -720,7 +722,10 @@ def _lock_metadata_is_stale(lock_path: str) -> bool:
         except FileNotFoundError:
             return False
     except (json.JSONDecodeError, OSError, ValueError, TypeError):
-        return True
+        try:
+            return time.time() - os.path.getmtime(lock_path) >= lock_metadata_grace_seconds
+        except FileNotFoundError:
+            return False
 
     pid = payload.get("pid")
     if isinstance(pid, int):

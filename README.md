@@ -234,6 +234,7 @@ Some of these failure modes can be reproduced using scripts in the [failure_mode
 * improve the detection of non-pure function so that it works when using a compiled third party module
 * add a less intrusive alternative to the use of a decorator by registering a function in a list of function names provided directly to disk_memoize
 * implement an automatic memoization of function that are long to evaluate using similar criterion to IncPy (see references) to decide if a function should be memoize or not
+* quantify runtime overhead with benchmarks — separate empty-cache tracing cost, cache-hit validation/load cost, and serialization cost; determine the break-even point as a function of execution time and result size
 * async function support (offered by checkpointer, perscache)
 * TTL-based cache expiry — automatically invalidate entries after a time-to-live period (offered by checkpointer, perscache)
 * selective argument ignoring — exclude specific arguments from cache key computation (offered by checkpointer via `HashBy`/`NoHash`, perscache via `ignore`)

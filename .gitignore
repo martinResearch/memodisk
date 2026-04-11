@@ -1,4 +1,5 @@
 *.pyc
 __pycache__
 memodisk.egg-info
+memodisk/_version.py
 

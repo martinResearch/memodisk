@@ -734,6 +734,10 @@ def _lock_metadata_is_stale(lock_path: str) -> bool:
 
 
 def _remove_stale_lock_directory(lock_path: str) -> bool:
+    # Re-verify staleness right before removal to prevent a race where another
+    # process already reclaimed the stale lock and replaced it with a live one.
+    if not _lock_metadata_is_stale(lock_path):
+        return False
     owner_path = _lock_owner_file_path(lock_path)
     try:
         with contextlib.suppress(FileNotFoundError):

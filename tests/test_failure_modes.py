@@ -1261,3 +1261,98 @@ def test_canonical_hash_dict_repr_collision() -> None:
     right = _canonical_hash({key2: 2, key1: 1})
 
     assert left == right
+
+
+# ---------------------------------------------------------------------------
+# 28. Stale lock double-remove race (mutual exclusion violation)
+# ---------------------------------------------------------------------------
+def test_stale_lock_double_remove_race() -> None:
+    """Race: two threads both detect a stale lock; the second removes the first's
+    fresh lock, violating mutual exclusion.
+
+    Scenario reproduced:
+      1. A stale lock exists (dead PID).
+      2. Thread A and Thread B both call _lock_metadata_is_stale → True.
+      3. Thread A removes the stale lock, creates a new one, enters critical section.
+      4. Thread B (still holding stale=True from step 2) calls
+         _remove_stale_lock_directory on Thread A's *live* lock — succeeds because
+         there is no re-verification of staleness.
+      5. Thread B creates its own lock and enters the critical section.
+      6. Both threads are in the critical section simultaneously.
+
+    The test injects synchronisation (barrier + event) to deterministically widen
+    the window between _lock_metadata_is_stale and _remove_stale_lock_directory.
+    """
+    import unittest.mock
+
+    import memodisk.memodisk as _mod
+
+    with tempfile.TemporaryDirectory(prefix="memodisk_lock_race_") as tmp_folder:
+        cache_prefix = os.path.join(tmp_folder, "cache_key")
+        lock_path = f"{cache_prefix}.lock"
+
+        # Plant a stale lock owned by a non-existent PID.
+        os.mkdir(lock_path)
+        with open(os.path.join(lock_path, "owner.json"), "w", encoding="utf-8") as fh:
+            json.dump({"pid": 2_147_483_647, "created_at": 0.0}, fh)
+
+        barrier = threading.Barrier(2, timeout=5.0)
+        first_in_critical = threading.Event()
+        call_order_lock = threading.Lock()
+        call_order: list[int] = []
+        barrier_used = threading.Event()
+
+        original_is_stale = _mod._lock_metadata_is_stale
+
+        def patched_is_stale(lp: str) -> bool:
+            result = original_is_stale(lp)
+            if result and lp == lock_path and not barrier_used.is_set():
+                with call_order_lock:
+                    call_order.append(threading.current_thread().ident)
+                    my_position = len(call_order)
+
+                # Both threads must confirm stale before either proceeds.
+                barrier.wait()
+                barrier_used.set()
+
+                if my_position == 2:
+                    # Second thread: wait until the first has acquired
+                    # and entered the critical section.
+                    first_in_critical.wait(timeout=5.0)
+            return result
+
+        # Track concurrent occupancy of the critical section.
+        in_critical_count = 0
+        count_lock = threading.Lock()
+        max_concurrent = 0
+
+        def worker() -> None:
+            nonlocal in_critical_count, max_concurrent
+            with _cache_process_lock(cache_prefix):
+                with count_lock:
+                    in_critical_count += 1
+                    max_concurrent = max(max_concurrent, in_critical_count)
+                first_in_critical.set()
+                time.sleep(0.3)  # hold lock long enough for the other thread
+                with count_lock:
+                    in_critical_count -= 1
+
+        with unittest.mock.patch.object(_mod, "_lock_metadata_is_stale", patched_is_stale):
+            threads = [
+                threading.Thread(target=worker, daemon=True),
+                threading.Thread(target=worker, daemon=True),
+            ]
+            for t in threads:
+                t.start()
+            for t in threads:
+                t.join(timeout=10.0)
+
+        assert not any(t.is_alive() for t in threads), "Worker threads should have finished"
+
+        # With the bug present, both threads enter the critical section
+        # simultaneously so max_concurrent == 2.  After the fix,
+        # max_concurrent must be exactly 1.
+        assert max_concurrent == 1, (
+            f"Mutual exclusion violated: {max_concurrent} threads were in "
+            f"the critical section simultaneously"
+        )

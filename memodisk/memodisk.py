@@ -672,7 +672,7 @@ def _is_pid_running(pid: int) -> bool:
     if pid <= 0:
         return False
 
-    if os.name == "nt":
+    if sys.platform == "win32":
         import ctypes
         from ctypes import wintypes
 

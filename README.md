@@ -175,9 +175,11 @@ Here is an example of a generated dependencies json file:
             "last_modified_date_str": "2020-03-04 15:33:14.682488"
         }
     ],
+    "random_states": null,
     "external_processes": [],
     "ambient_time_sources": [],
-    "random_states": null,
+    "ambient_environment_sources": [],
+    "ignore_code_changes": false,
     "result_serializer": "pickle",
     "argument_hasher": null,
     "store_call_arguments": false,

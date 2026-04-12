@@ -229,6 +229,16 @@ If the same function is called multiple times with the same input arguments but 
 
 Some of these failure modes can be reproduced using scripts in the [failure_modes](./failure_modes) folder.
 
+## Potential Python improvements
+
+memodisk is intentionally built on standard CPython mechanisms rather than a custom interpreter, so a few targeted Python/runtime improvements could make it both faster and more robust:
+
+* a more selective extension of `sys.monitoring` (PEP 669) that can trace only the dynamic extent of a memoized call and report higher-level dependency events with lower overhead than per-frame or per-opcode callbacks
+* a first-class interpreter API for observing important side effects and ambient inputs such as file opens, subprocess launches, environment-variable reads, time APIs, and randomness sources
+* stable interpreter-provided fingerprints for code objects, imported modules, and installed-package versions so tools like memodisk do less ad hoc hashing and dependency bookkeeping themselves
+
+These would not change memodisk's core design, but they would reduce tracing overhead, improve coverage of non-Python dependencies, and simplify parts of the implementation.
+
 ## TODO
 
 * improve the detection of non-pure function so that it works when using a compiled third party module

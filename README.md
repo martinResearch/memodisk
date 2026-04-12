@@ -242,6 +242,7 @@ These would not change memodisk's core design, but they would reduce tracing ove
 ## TODO
 
 * improve the detection of non-pure function so that it works when using a compiled third party module
+* experimental strict declared-dependency mode — allow a memoized function to declare the files or directory roots it is allowed to read, then execute the outermost memoized call in an isolated subprocess sandbox that fails on undeclared file access. Nested memoized calls should inherit the active sandbox by default and only be allowed to narrow the allowlist, not expand it.
 * add less intrusive alternatives to the decorator-only API — e.g. registering functions in a list of function names provided directly to `disk_memoize`, or other ways to opt into memoization without editing every function definition
 * implement an automatic memoization of function that are long to evaluate using similar criterion to IncPy (see references) to decide if a function should be memoize or not
 * quantify runtime overhead with benchmarks — separate empty-cache tracing cost, cache-hit validation/load cost, and serialization cost; determine the break-even point as a function of execution time and result size
